@@ -1,35 +1,39 @@
 import { libs } from "../../pages/general.page";
 
 describe("Honest food Sanity suite", () => {
+  beforeAll(async () => {
+    await libs.launch();
+    await libs.goTo();
+  });
 
-    beforeAll(async () => {
-        await libs.launch();
-    });
+  it("Select mamacita brand", async () => {
+    // assertions are available at utility libs level
+    await libs.selectBrand("mamacita");
+  });
 
-    beforeEach(async()=>{
-        await libs.goTo();
-    })
+  it("Add product to cart and checkout", async () => {
+    // assertions are available at utility libs level
+    await libs.checkout();
+  });
 
-        it('Order mamacita brand', async () => {
-            // assertions are available at utility libs level
-            await libs.order('mamacita');
-        })
+  afterEach(async () => {
+    console.log(
+      "Test",
+      jasmine["currentTest"].fullName,
+      "failed",
+      !!jasmine["currentTest"].failedExpectations.length
+    );
+    if (!!jasmine["currentTest"].failedExpectations.length) {
+      const screenshotBuffer = await page.screenshot();
+      await reporter.addAttachment(
+        jasmine["currentTest"].fullName,
+        screenshotBuffer,
+        "image/png"
+      );
+    }
+  });
 
-    afterEach(async () => {
-        console.log(
-           'Test',
-           jasmine['currentTest'].fullName,
-           'failed',
-           !!jasmine['currentTest'].failedExpectations.length
-         );
-         if (!!jasmine['currentTest'].failedExpectations.length) {
-           const screenshotBuffer = await page.screenshot();
-          await reporter.addAttachment(jasmine['currentTest'].fullName, screenshotBuffer, "image/png");
-         }
-       });
-
-    afterAll(async () => {
-        await libs.tearDown();
-    });
-
-})
+  afterAll(async () => {
+    await libs.tearDown();
+  });
+});

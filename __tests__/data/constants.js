@@ -1,11 +1,8 @@
 exports.data = {
-    portal: {
-      URL: `https://staging.clubkitchen.at/`
-    },
-    formData: {
-      user: `tomsmith`,
-      pass: `SuperSecretPassword!`,
-      alertmessage: `You logged into a secure area!`
-    }
-  };
-  
+  portal: {
+    URL: `https://staging.clubkitchen.at/`,
+  },
+  formData: {
+    address: `Seidengasse 44, 1070 Wien, Austria`,
+  },
+};

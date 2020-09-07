@@ -2,16 +2,23 @@ const { chromium } = require("playwright");
 const { action } = require("../utilities/action");
 const { checks } = require("../utilities/check");
 const { data } = require("../data/constants");
+const { check } = require("prettier");
 
 const locator = {
-  brand: {
-    mamacita: `.right > .banner--link[href="/speisekarte/mamacita/wallenstein/"]`,
-  },
-  checkout: {
-    addrs: `[id="address-input"]`,
-    toMenu: `.form-address input[type="submit"]`,
-    firstProduct: `[name="sAddToBasket"]`,
-    addToCart: `.content--cart-button`,
+  table: {
+    headers: {
+      fname: `//*[contains(text(),"FirstName")]`,
+      lname: `//*[contains(text(),"LastName")]`,
+      title: `//*[@role="columnheader"]//*[contains(text(),"Title")]`,
+      contents: `[id="contenttabletreeGrid"]`,
+      databtn: `[id="btn"]`,
+    },
+    grid: {
+      firstgrid: `td[role="gridcell"]`,
+      treegrid: `[id="row1treeGrid"]`,
+      userinfo: `[id="listitem0listBoxSelected"]`,
+      databtn: `[id="btn"]`,
+    },
   },
 };
 
@@ -47,17 +54,29 @@ exports.libs = {
     await page.setExtraHTTPHeaders({
       "Accept-Language": "en-US",
     });
+    let title = await page.title();
+    await checks.compareTextIgnorcase(title, `Employees from`);
   },
-  selectBrand: async (type) => {
-    const { mamacita } = locator.brand;
-    const { pass, user, alertmessage } = data.formData;
-    switch (String(type)) {
-      case `mamacita`:
-        //assertion
-        await checks.visible(mamacita);
-        await action.click(mamacita);
-        break;
-    }
+  checkTable: async () => {
+    const { fname, lname, title, contents, databtn } = locator.table.headers;
+    await checks.visible(fname);
+    await checks.visible(lname);
+    await checks.visible(title);
+    await checks.visible(contents);
+    await checks.visible(databtn);
+  },
+  checkgrids: async () => {
+    const { firstgrid, treegrid } = locator.table.grid;
+    await checks.visible(treegrid);
+    await action.click(firstgrid);
+    await checks.visible(treegrid, true);
+  },
+  checkViewData: async (name, location) => {
+    const { firstgrid, userinfo, databtn } = locator.table.grid;
+    await action.click(`.jqx-tree-grid-checkbox`);
+    await action.click(databtn);
+    let info = await action.getText(userinfo);
+    await checks.compareTextIgnorcase(info, `${name} is from ${location}`);
   },
   checkout: async () => {
     const { addrs, toMenu, firstProduct, addToCart } = locator.checkout;
